@@ -455,3 +455,71 @@ FROM almacenes AS a
 INNER JOIN cajas AS c
 ON a.codigo = c.almacen
 WHERE(SELECT COUNT(c.NUMREFERENCIA)) > a.capacidad;
+
+/*----------------------------------------------------------------------------------------------------
+EJERCICIO 4
+------------------------------------------------------------------------------------------------------*/
+
+#4.1. Mostrar el nombre de todas las películas.
+
+SELECT nombre 
+FROM peliculas;
+
+#4.2. Mostrar las distintas calificaciones de edad que existen.
+
+SELECT calificacionedad
+FROM peliculas;
+
+#4.3. Mostrar todas las películas que no han sido calificadas.
+
+SELECT *
+FROM peliculas
+WHERE calificacionedad IS null;
+
+#4.4. Mostrar todas las salas que no proyectan ninguna película.
+
+SELECT *
+FROM salas
+WHERE pelicula IS null;
+
+#4.5. Mostrar la información de todas las salas y, si se proyecta alguna película en la sala, mostrar también la información de la película.
+
+SELECT s.codigo AS "Código Sala", s.nombre, p.codigo AS "Código Peli", p.nombre AS "Película", p.calificacionedad
+FROM salas AS s
+LEFT JOIN peliculas AS p
+ON s.pelicula = p.codigo
+ORDER BY s.codigo;
+
+#4.6. Mostrar la información de todas las películas y, si se proyecta en alguna sala, mostrar también la información de la sala
+
+SELECT s.codigo AS "Código Sala", s.nombre, p.codigo AS "Código Peli", p.nombre AS "Película", p.calificacionedad
+FROM salas AS s
+RIGHT JOIN peliculas AS p
+ON s.pelicula = p.codigo
+ORDER BY s.codigo;
+
+#4.7. Mostrar los nombres de las películas que no se proyectan en ninguna sala.
+
+SELECT s.codigo AS "Código Sala", s.nombre, p.codigo AS "Código Peli", p.nombre AS "Película", p.calificacionedad
+FROM salas AS s
+RIGHT JOIN peliculas AS p
+ON s.pelicula = p.codigo
+WHERE s.nombre IS null
+ORDER BY p.codigo;
+
+#4.8. Añadir una nueva película 'Uno, Dos, Tres', para mayores de 7 años.
+
+INSERT INTO peliculas VALUE(10, 'Uno, Dos, Tres', 'PG-7');
+
+#4.9. Hacer constar que todas las películas no calificadas han sido calificadas 'no recomendables para menores de 13 años'.
+
+UPDATE peliculas 
+SET calificacionedad = 'PG-13'
+WHERE calificacionedad IS null;
+
+#4.10. Eliminar todas las salas que proyectan películas recomendadas para todos los públicos.
+
+DELETE s FROM salas AS s
+JOIN peliculas AS p
+ON s.pelicula = p.codigo
+WHERE p.calificacionedad = 'G';

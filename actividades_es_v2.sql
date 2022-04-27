@@ -99,6 +99,9 @@ CREATE TABLE `salas` (
 
 INSERT INTO `salas` VALUES (1,'Odeon',5),(2,'Imperial',1),(3,'Majestic',NULL),(4,'Royale',6),(5,'Paraiso',3),(6,'Nickelodeon',NULL);
 
+/*----------------------------------------------------------------------------------------------------
+EJERCICIO 1
+------------------------------------------------------------------------------------------------------*/
 #1.1. Obtener los nombres de los productos de la tienda: 
 
 SELECT nombre as "Nombre Artículo" FROM articulos;
@@ -220,13 +223,134 @@ WHERE codigo = 8;
 
 #1.19. Aplicar un descuento del 10% (multiplicar el precio por el 0'9) a todos los productos.
 
-/*UPDATE articulos 
-SET precio = (precio*0.9);
-
-SELECT * FROM articulos;*/
+UPDATE articulos 
+SET precio = precio*0.9;
 
 #1.20. Aplicar un descuento de 10€ a todos los productos cuyo precio sea mayor o igual a 120€.
 
-/*UPDATE articulos 
+UPDATE articulos 
 SET precio = (precio-10)
-WHERE precio >= 120;*/
+WHERE precio >= 120;
+
+/*----------------------------------------------------------------------------------------------------
+EJERCICIO 2
+------------------------------------------------------------------------------------------------------*/
+
+#2.1. Obtener los apellidos de los empleados
+
+SELECT apellidos
+FROM empleados
+ORDER BY apellidos;
+
+#2.2. Obtener los apellidos de los empleados sin repeticiones
+
+SELECT DISTINCT apellidos
+FROM empleados
+ORDER BY apellidos;
+
+#2.3. Obtener todos los datos de los empleados que se apellidan 'Smith'.
+
+SELECT *
+FROM empleados
+WHERE apellidos = 'Smith';
+
+#2.4. Obtener todos los datos de los empleados que se apellidan 'Smith' y 'Rogers'.
+
+SELECT *
+FROM empleados
+WHERE apellidos = 'Smith'
+OR apellidos = 'Rogers';
+
+#2.5. Obtener todos los datos de los empleados que trabajan para el departamento 14.
+
+SELECT * 
+FROM empleados
+WHERE departamento = 14;
+
+#2.6. Obtener todos los datos de los empleados que trabajan para el departamento 37 y para el departamento 77
+
+SELECT * 
+FROM empleados
+WHERE departamento = 37
+OR departamento = 77;
+
+#2.7. Obtener todos los datos de los empleados cuyo apellido comience por 'P'.
+
+SELECT * 
+FROM empleados
+WHERE apellidos LIKE 'P%';
+
+#2.8. Obtener el presupuesto total de todos los departamentos
+
+SELECT SUM(presupuesto) AS "Presupuesto total"
+FROM departamentos;
+
+#2.9. Obtener el número de empleados en cada departamento.
+
+SELECT COUNT(nombre) AS "Nº empleados", departamento
+FROM empleados
+GROUP BY departamento;
+
+#2.10. Obtener un listado completo de empleados, incluyendo por cada empleado los datos del empleado y de su departamento
+
+SELECT e.*, d.*
+FROM empleados AS e
+INNER JOIN departamentos AS d
+ON e.departamento = d.codigo;
+
+#2.11. Obtener un listado completo de empleados, incluyendo el nombre y apellidos del empleado junto al nombre y presupuesto de su departamento.
+
+SELECT e.nombre AS Nombre, e.apellidos AS Apellido, d.nombre AS Departamento, d.presupuesto AS Presupuesto
+FROM empleados AS e
+INNER JOIN departamentos AS d
+ON e.departamento = d.codigo;
+
+#2.12 Obtener los nombres y apellidos de los empleados que trabajen en departamentos cuyo presupuesto sea mayor de 60.000€.
+
+SELECT e.nombre AS Nombre, e.apellidos AS Apellido
+FROM empleados AS e
+INNER JOIN departamentos AS d
+ON e.departamento = d.codigo
+WHERE d.presupuesto > 60000;
+
+#2.13 Obtener los datos de los departamentos cuyo presupuesto es superior al presupuesto medio de todos los departamentos
+
+SELECT *
+FROM departamentos
+HAVING presupuesto > AVG(presupuesto);
+
+#2.14 Obtener los nombres (únicamente los nombres) de los departamentos que tienen más de dos empleados
+
+SELECT d.nombre
+FROM departamentos AS d
+INNER JOIN empleados AS e
+ON d.codigo = e.departamento
+HAVING COUNT(e.nombre) > 2;
+
+#2.15. Añadir un nuevo departamento: 'Calidad', con presupuesto 40.000€ código 11. Añadir un empleado vinculado al departamento recién creado: Esther Vázquez, DNI: 89237109
+
+INSERT INTO departamentos VALUE (19, 'Calidad', 40000);
+INSERT INTO empleados VALUE(89267109, 'Esther', 'Vázquez', 19);
+
+#2.16. Aplicar un recorte presupuestario del 10% a todos los departamentos.
+
+UPDATE departamentos 
+SET presupuesto = presupuesto*0.10;
+
+#2.17. Reasignar a los empleados del departamento de investigación (código 77) al departamento de informática (código 14).
+
+UPDATE empleados
+SET departamento = 14
+WHERE departamento = 77;
+
+#2.18. Despedir a todos los empleados que trabajan para el departamento de informática (código 14).
+
+DELETE FROM empleados WHERE departamento = 14;
+
+#1.19. Despedir a todos los empleados que trabajen para departamentos cuyo presupuesto sea superior a los 60.000€.
+
+DELETE FROM departamentos WHERE presupuesto > 60000;
+
+#1.20. Despedir a todos los empleados;
+
+DELETE FROM empleados;

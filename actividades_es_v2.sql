@@ -354,3 +354,104 @@ DELETE FROM departamentos WHERE presupuesto > 60000;
 #1.20. Despedir a todos los empleados;
 
 DELETE FROM empleados;
+
+/*----------------------------------------------------------------------------------------------------
+EJERCICIO 3
+------------------------------------------------------------------------------------------------------*/
+
+#3.1. Obtener todos los almacenes
+
+SELECT * 
+FROM almacenes;
+
+#3.2. Obtener todas las cajas cuyo contenido tenga un valor superior a 150€.
+
+SELECT *
+FROM cajas
+WHERE valor > 150;
+
+#3.3. Obtener los tipos de contenidos de las cajas.
+
+SELECT DISTINCT contenido
+FROM cajas;
+
+#3.4. Obtener el valor medio de las cajas.
+
+SELECT AVG(valor) AS "Valor medio"
+FROM cajas;
+
+#3.5. Obtener el valor medio de las cajas de cada almacén.
+
+SELECT almacen, AVG(valor) AS "Valor medio"
+FROM cajas
+GROUP BY almacen;
+
+#3.6. Obtener los códigos de los almacenes en los cuales el valor medio de las cajas sea superior a 150€.
+
+SELECT a.codigo, AVG(c.valor)
+FROM almacenes AS a
+INNER JOIN cajas AS c
+ON a.codigo = c.almacen
+HAVING AVG(c.valor) > 150;
+
+#3.7. Obtener el número de referencia de cada cada caja junto con el nombre de la ciudad en el que se encuentra
+
+SELECT c.numreferencia, a.lugar
+FROM cajas AS c
+INNER JOIN almacenes AS a
+ON c.almacen = a.codigo
+ORDER BY a.lugar;
+
+#3.8. Obtener el número de cajas que hay en cada almacén
+
+SELECT almacen, COUNT(NUMREFERENCIA) AS "Total Cajas"
+FROM cajas
+GROUP BY almacen;
+
+#3.9. Obtener los códigos de los almacenes que están saturados (los almacenes donde el número de cajas es superior a la capacidad).
+
+SELECT c.almacen
+FROM cajas AS c
+INNER JOIN almacenes AS a
+ON c.almacen = a.codigo
+WHERE (SELECT COUNT(c.NUMREFERENCIA)) > a.capacidad
+GROUP BY c.almacen;
+
+#3.10. Obtener los números de referencia de las cajas que están en Bilbao.
+
+SELECT c.numreferencia, a.lugar
+FROM cajas AS c
+INNER JOIN almacenes AS a
+ON c.almacen = a.codigo
+WHERE a.lugar = 'Bilbao';
+
+#3.11. Insertar un nuevo almacén en Barcelona con capacidad para 3 cajas
+
+INSERT INTO almacenes VALUE(6, 'Barcelona', 3);
+
+#3.12. Insertar una nueva caja, con número de referencia 'H5RT', con contenido 'Papel', valor 200, y situada en el almacén 2.
+
+INSERT INTO cajas VALUE('H5RT', 'Papel', 200, 2);
+
+#3.13. Rebajar el valor de todas las cajas un 15%.
+
+UPDATE cajas 
+SET valor = valor*0.15;
+
+#3.14. Rebajar un 20% el valor de todas las cajas cuyo valor sea superior al valor medio de todas las cajas.
+
+UPDATE cajas 
+SET valor = valor*0.20
+WHERE valor > (SELECT AVG(valor));
+
+#3.15. Eliminar todas las cajas cuyo valor sea inferior a 100€.
+
+DELETE FROM cajas WHERE valor < 100;
+
+#3.16.Vaciar el contenido de los almacenes que están saturados.
+
+DELETE a.*
+FROM almacenes AS a
+INNER JOIN cajas AS c
+ON a.codigo = c.almacen
+WHERE(SELECT COUNT(c.NUMREFERENCIA)) > a.capacidad;
